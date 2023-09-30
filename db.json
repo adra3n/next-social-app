@@ -1,0 +1,54 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "sertac",
+      "fullName": "Sertaç Kocagil"
+    },
+    {
+      "id": 2,
+      "username": "ahmet",
+      "fullName": "Ahmet Mehmet"
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "userId": 1,
+      "imageUrl": "https://via.placeholder.com/400",
+      "description": "A post by sertac",
+      "comments": [
+        {
+          "id": 1,
+          "userId": 2,
+          "text": "Great post, Ahmet!"
+        },
+        {
+          "id": 2,
+          "userId": 1,
+          "text": "Thanks, Sertaç!"
+        }
+      ],
+      "likes": 10
+    },
+    {
+      "id": 2,
+      "userId": 2,
+      "imageUrl": "https://via.placeholder.com/400",
+      "description": "Testing post",
+      "comments": [
+        {
+          "id": 3,
+          "userId": 1,
+          "text": "Nice photo!"
+        },
+        {
+          "id": 4,
+          "userId": 2,
+          "text": "Thank you, Sertaç!"
+        }
+      ],
+      "likes": 5
+    }
+  ]
+}
