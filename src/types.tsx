@@ -9,7 +9,6 @@ export interface Comment {
   id: number
   userId: number
   text: string
-  username: string
 }
 
 export interface Post {
