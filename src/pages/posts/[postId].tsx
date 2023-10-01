@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-
+import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 import { FaThumbsUp } from 'react-icons/fa'
-import { User } from '@/types'
+
 import Menu from '@/components/Menu'
+import { User } from '@/types'
+import { setUsers } from '@/redux/userSlice'
 
 interface Comment {
   id: number
@@ -22,29 +24,32 @@ interface Post {
   isLiked: boolean
 }
 
+const serverUrl = 'http://localhost:3001'
+
 const PostDetail: React.FC = () => {
+  const users = useSelector((state: any) => state.users)
+
+  const [post, setPost] = useState<Post | null>(null)
+  const [newComment, setNewComment] = useState<string>('')
+
   const router = useRouter()
   const { postId } = router.query
 
-  const [post, setPost] = useState<Post | null>(null)
-  const [users, setUsers] = useState<User[]>([])
-  const [newComment, setNewComment] = useState<string>('')
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (postId) {
       try {
-        axios
-          .get<Post>(`http://localhost:3001/posts/${postId}`)
-          .then((response) => {
-            setPost(response.data)
-          })
+        axios.get<Post>(`${serverUrl}/posts/${postId}`).then((response) => {
+          setPost(response.data)
+        })
       } catch (error) {
         console.log('error loading post data>>', error)
       }
 
       try {
-        axios.get<User[]>('http://localhost:3001/users').then((response) => {
-          setUsers(response.data)
+        axios.get<Post[]>(`${serverUrl}/posts`).then((response) => {
+          dispatch(setUsers(response.data))
         })
       } catch (error) {
         console.log('error loading users data>>', error)
@@ -68,7 +73,7 @@ const PostDetail: React.FC = () => {
         isLiked: !post.isLiked,
       }
       setPost(updatedPost)
-      await axios.post(`http://localhost:3001/posts/${postId}/like`)
+      await axios.post(`${serverUrl}/posts/${postId}/like`)
     } catch (error) {
       console.error('error updating likes>>>', error)
     }
@@ -92,16 +97,13 @@ const PostDetail: React.FC = () => {
         }
         setPost(updatedPost)
 
-        //clear
-        setNewComment('')
         //post
-        axios.post(
-          `http://localhost:3001/posts/${postId}/comments`,
-          newCommentObj
-        )
+        axios.post(`${serverUrl}/posts/${postId}/comments`, newCommentObj)
       } catch (error) {
         console.error('error posting comment>>>', error)
       }
+      //clear
+      setNewComment('')
     } else {
       alert('Not a valid comment')
     }
@@ -139,7 +141,10 @@ const PostDetail: React.FC = () => {
               {post.comments.map((comment) => (
                 <li key={comment.id} className="text-gray-800">
                   <span className="font-semibold">
-                    {users.find((user) => user.id === comment.userId)?.username}
+                    {
+                      users.find((user: User) => user.id === comment.userId)
+                        ?.username
+                    }
                   </span>
                   - {comment.text}
                 </li>

@@ -2,37 +2,45 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { FaComment, FaThumbsUp } from 'react-icons/fa'
 import { useRouter } from 'next/router'
+import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import Menu from '@/components/Menu'
+import { setPostModal } from '@/redux/postModalSlice'
+import { setUsers } from '../redux/userSlice'
 import { Post, User, Comment } from '../types'
+import { setPosts } from '@/redux/postSlice'
 
 //im using hardcoded user id for mocking user login
 const clientUserId = 1
 
 const Home: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([])
-  const [postModal, setPostModal] = useState<Post | null>(null)
-  const [users, setUsers] = useState<User[]>([])
   const [newComment, setNewComment] = useState<string>('')
 
-  const router = useRouter()
+  //useSelectors for redux
+  const users = useSelector((state: any) => state.users)
+  const posts = useSelector((state: any) => state.posts)
+  const postModal = useSelector((state: any) => state.postModal)
 
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const serverUrl = 'http://localhost:3001'
   const openPostModal = (post: Post) => {
     try {
       localStorage.setItem('postModal', JSON.stringify(post))
-      setPostModal(post)
+      dispatch(setPostModal(post))
     } catch (error) {}
   }
 
   const closePostModal = () => {
-    setPostModal(null)
+    dispatch(setPostModal(null))
     console.log(postModal)
     localStorage.removeItem('postModal')
   }
 
   const findUsername = (userId: number) => {
     try {
-      const user = users.find((user) => user.id === userId)
+      const user = users.find((user: User) => user.id === userId)
       if (user) {
         return user.username
       } else {
@@ -56,8 +64,8 @@ const Home: React.FC = () => {
         likes: postModal.isLiked ? postModal.likes - 1 : postModal.likes + 1,
         isLiked: !postModal.isLiked,
       }
-      setPostModal(updatedPost)
-      await axios.post(`http://localhost:3001/posts/${postModal.id}/like`)
+      dispatch(setPostModal(updatedPost))
+      await axios.post(`${serverUrl}/posts/${postModal.id}/like`)
     } catch (error) {
       console.error('error updating likes>>>', error)
     }
@@ -79,18 +87,18 @@ const Home: React.FC = () => {
           ...postModal,
           comments: [...postModal.comments, newCommentObj],
         }
-        setPostModal(updatedPost)
+        dispatch(setPostModal(updatedPost))
 
         // axios post comment
         await axios.post(
-          `http://localhost:3001/posts/${postModal.id}/comments`,
+          `${serverUrl}/posts/${postModal.id}/comments`,
           newCommentObj
         )
-        //clear newComment
-        setNewComment('')
       } catch (error) {
         console.error('error posting comment>>>', error)
       }
+      //clear newComment
+      setNewComment('')
     }
   }
 
@@ -110,18 +118,18 @@ const Home: React.FC = () => {
       console.log('error gettin local data>>', error)
     }
     axios
-      .get<Post[]>('http://localhost:3001/posts')
+      .get<Post[]>(`${serverUrl}/posts`)
       .then((response) => {
-        setPosts(response.data)
+        dispatch(setPosts(response.data))
       })
       .catch((error) => {
         console.log('error getting posts>>>', error)
       })
 
     axios
-      .get<User[]>('http://localhost:3001/users')
+      .get<User[]>(`${serverUrl}/users`)
       .then((response) => {
-        setUsers(response.data)
+        dispatch(setUsers(response.data))
       })
       .catch((error) => {
         console.log('error getting users>>>', error)
@@ -134,8 +142,8 @@ const Home: React.FC = () => {
       <div className="container lg:mt-[-100vh] lg:pl-[20vw] w-100vw">
         {/* posts */}
         <div className=" flex flex-col w-full justify-center items-center gap-5 text-gray-800  ">
-          <h2 className="text-xl font-semibold mt-8">Posts</h2>
-          {posts.map((post) => (
+          <h2 className="text-xl font-semibold mt-8">Your Feed</h2>
+          {posts.map((post: Post) => (
             <div
               key={post.id}
               className="bg-white rounded-lg shadow-md w-56 lg:w-[30vw] "
@@ -198,7 +206,7 @@ const Home: React.FC = () => {
               <h2 className="text-lg font-semibold  mb-2">Comments:</h2>
 
               <ul>
-                {postModal.comments.map((comment) => (
+                {postModal.comments.map((comment: Comment) => (
                   <li key={comment.id} className="text-gray-800">
                     <span className="font-semibold">
                       {findUsername(comment.userId)}
