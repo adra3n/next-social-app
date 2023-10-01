@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { FaThumbsUp } from 'react-icons/fa'
+import { FaComment, FaThumbsUp } from 'react-icons/fa'
+import { useRouter } from 'next/router'
 
 import Menu from '@/components/Menu'
 import { Post, User, Comment } from '../types'
@@ -13,6 +14,8 @@ const Home: React.FC = () => {
   const [postModal, setPostModal] = useState<Post | null>(null)
   const [users, setUsers] = useState<User[]>([])
   const [newComment, setNewComment] = useState<string>('')
+
+  const router = useRouter()
 
   const openPostModal = (post: Post) => {
     try {
@@ -61,51 +64,51 @@ const Home: React.FC = () => {
   }
 
   const handleComment = async () => {
-    if (!postModal) {
-      console.log('post not found')
-      return
-    }
+    if (postModal && newComment.trim() !== '') {
+      try {
+        const newCommentObj: Comment = {
+          //  length+1 for mocking increment on db
+          id: postModal.comments.length + 1,
+          //logged in user id (using clientUserId for mock)
+          userId: clientUserId,
+          text: newComment,
+        }
 
-    try {
-      const newCommentObj: Comment = {
-        //im generating random id for mock (should be increment on backend)
-        id: Math.floor(Math.random() * 100),
-        //logged in user id (using clientUserId for mock)
-        userId: clientUserId,
-        text: newComment,
+        // update the post with newCommentObj
+        const updatedPost: Post = {
+          ...postModal,
+          comments: [...postModal.comments, newCommentObj],
+        }
+        setPostModal(updatedPost)
+
+        // axios post comment
+        await axios.post(
+          `http://localhost:3001/posts/${postModal.id}/comments`,
+          newCommentObj
+        )
+        //clear newComment
+        setNewComment('')
+      } catch (error) {
+        console.error('error posting comment>>>', error)
       }
-
-      // update the post with newCommentObj
-      const updatedPost: Post = {
-        ...postModal,
-        comments: [...postModal.comments, newCommentObj],
-      }
-      setPostModal(updatedPost)
-
-      // axios post comment
-      await axios.post(
-        `http://localhost:3001/posts/${postModal.id}/comments`,
-        newCommentObj
-      )
-      //clear newComment
-      setNewComment('')
-    } catch (error) {
-      console.error('error posting comment>>>', error)
     }
   }
 
   //im getting posts and users with page load and setting them in states
   useEffect(() => {
     try {
+      // checking modal post data in local storage
       const localPostModal = localStorage.getItem('postModal')
       if (localPostModal) {
+        // parsing
         const postData = JSON.parse(localPostModal)
-        console.log('post', postData)
+        console.log('post from localstorage', postData)
+        // redirect
+        router.push(`/posts/${postData.id}`)
       }
     } catch (error) {
-      console.log(error)
+      console.log('error gettin local data>>', error)
     }
-
     axios
       .get<Post[]>('http://localhost:3001/posts')
       .then((response) => {
@@ -146,7 +149,14 @@ const Home: React.FC = () => {
               <div className="p-4">
                 <p>{post.description}</p>
                 <div className="flex items-center mt-4">
-                  <span className="italic">{post.likes} Likes</span>
+                  <span className="italic flex gap-1 items-center">
+                    <FaThumbsUp />
+                    {post.likes} Likes
+                  </span>
+                  <span className="ml-5 italic flex gap-1 items-center">
+                    <FaComment></FaComment>
+                    {post.comments.length} Comments
+                  </span>
                 </div>
               </div>
             </div>
@@ -181,7 +191,7 @@ const Home: React.FC = () => {
                   onClick={handleLike}
                 >
                   <FaThumbsUp />
-                </button>{' '}
+                </button>
                 <span className="ml-2 italic">{postModal.likes} Likes</span>
               </div>
               {/* comments */}
