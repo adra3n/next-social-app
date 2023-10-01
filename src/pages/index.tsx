@@ -2,6 +2,11 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
 import { Post, User, Comment } from '../types'
+import { FaThumbsUp } from 'react-icons/fa'
+import Header from '@/components/Header'
+
+//im using hardcoded user id for mocking user login
+const clientUserId = 1
 
 const Home: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([])
@@ -9,6 +14,7 @@ const Home: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
   const [newComment, setNewComment] = useState<string>('')
 
+  //im getting posts and users with page load and setting them in states
   useEffect(() => {
     axios
       .get<Post[]>('http://localhost:3001/posts')
@@ -50,15 +56,68 @@ const Home: React.FC = () => {
     }
   }
 
-  const handleLike = async () => {}
+  const handleLike = async () => {
+    //validation for postModal for ts
+    if (!postModal) {
+      console.log('post not found')
+      return
+    }
+    try {
+      //updating post like count and setting isLiked boolean for simple like feature
+      const updatedPost: Post = {
+        ...postModal,
+        likes: postModal.isLiked ? postModal.likes - 1 : postModal.likes + 1,
+        isLiked: !postModal.isLiked,
+      }
+      setPostModal(updatedPost)
+      await axios.post(`http://localhost:3001/posts/${postModal.id}/like`)
+    } catch (error) {
+      console.error('error updating likes>>>', error)
+    }
+  }
 
-  const handleComment = async () => {}
+  const handleComment = async () => {
+    if (!postModal) {
+      console.log('post not found')
+      return
+    }
+
+    try {
+      const newCommentObj: Comment = {
+        //im generating random id for mock (should be increment on backend)
+        id: Math.floor(Math.random() * 100),
+        //logged in user id (using clientUserId for mock)
+        userId: clientUserId,
+        text: newComment,
+      }
+
+      // update the post with newCommentObj
+      const updatedPost: Post = {
+        ...postModal,
+        comments: [...postModal.comments, newCommentObj],
+      }
+      setPostModal(updatedPost)
+
+      // axios post comment
+      await axios.post(
+        `http://localhost:3001/posts/${postModal.id}/comments`,
+        newCommentObj
+      )
+      //clear newComment
+      setNewComment('')
+    } catch (error) {
+      console.error('error posting comment>>>', error)
+    }
+  }
 
   return (
-    <div className="bg-gray-200 min-h-screen">
-      <div className="container mx-auto p-4">
-        <div className="flex flex-wrap flex-col justify-center gap-5 text-gray-800 lg:w-4/12 sm:w-1/2">
-          <h2 className="text-2xl font-semibold mt-4">Posts</h2>
+    <div className="bg-gray-200 min-h-screen ">
+      <Header />
+
+      <div className="container p-4 ">
+        {/* posts */}
+        <div className="flex flex-wrap flex-col justify-center gap-5 text-gray-800 lg:w-4/12 sm:w-1/2 ">
+          <h2 className="text-xl font-semibold mt-4">Posts</h2>
           {posts.map((post) => (
             <div
               key={post.id}
@@ -80,6 +139,7 @@ const Home: React.FC = () => {
           ))}
         </div>
       </div>
+      {/* modal */}
       {postModal && (
         <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-opacity-80 bg-black text-gray-800">
           <button
@@ -99,9 +159,18 @@ const Home: React.FC = () => {
 
               <hr></hr>
               <div className="flex items-center mt-2 mb-6 ">
-                <button onClick={handleLike}>Like</button>
+                {/* like button color change*/}
+                <button
+                  className={`${
+                    postModal.isLiked ? 'text-blue-500 ' : ' text-gray-500'
+                  }`}
+                  onClick={handleLike}
+                >
+                  <FaThumbsUp />
+                </button>{' '}
                 <span className="ml-2 italic">{postModal.likes} Likes</span>
               </div>
+              {/* comments */}
               <h2 className="text-lg font-semibold  mb-2">Comments:</h2>
 
               <ul>

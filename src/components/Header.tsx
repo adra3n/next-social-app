@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
-import { FaBars } from 'react-icons/fa'
-import { FaUser } from 'react-icons/fa'
-import { FaHome } from 'react-icons/fa'
-import { FaPlus } from 'react-icons/fa'
+import { FaBars, FaUser, FaHome, FaPlus } from 'react-icons/fa'
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -14,8 +11,8 @@ const Header: React.FC = () => {
   return (
     <header className="sticky min-w-full top-0 z-10 bg-white text-gray-700 shadow-lg">
       <div className="container py-4 min-w-full px-4">
-        <div className="flex justify-between items-center lg:px-20">
-          <div className="lg:text-xl font-bold">Insta</div>
+        <div className="flex justify-between items-center">
+          <div className="lg:text-2xl text-xl font-bold">Insta</div>
           <div className="flex-2 mx-3">
             <input
               type="text"
@@ -23,7 +20,7 @@ const Header: React.FC = () => {
               className="lg:w-96 lg:px-4 text-center py-2 border border-gray-300 rounded-full focus:outline-blue-400"
             />
           </div>
-          <div className="hidden lg:flex flex-1 flex-row gap-10">
+          <div className="hidden lg:flex flex-row gap-10 text-2xl">
             <div className="cursor-pointer">
               <FaPlus />
             </div>
@@ -34,7 +31,6 @@ const Header: React.FC = () => {
               <FaHome />
             </div>
           </div>
-
           <div className="lg:hidden cursor-pointer" onClick={toggleMenu}>
             <FaBars size={24} />
           </div>
