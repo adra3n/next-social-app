@@ -19,16 +19,16 @@
       "description": "A post by sertac",
       "comments": [
         {
-          "id": 1,
-          "userId": 2,
-          "username": "sertac",
-          "text": "Great post, Ahmet!"
-        },
-        {
           "id": 2,
           "userId": 1,
           "username": "ahmet",
-          "text": "Thanks, Sertaç!"
+          "text": "Great post, Sertaç!"
+        },
+        {
+          "id": 1,
+          "userId": 2,
+          "username": "sertac",
+          "text": "Thanks, Ahmet!"
         }
       ],
       "likes": 10
@@ -53,6 +53,36 @@
         }
       ],
       "likes": 5
+    },
+    {
+      "id": 3,
+      "userId": 2,
+      "imageUrl": "https://picsum.photos/id/239/800/600",
+      "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+      "comments": [
+        {
+          "id": 5,
+          "userId": 1,
+          "username": "sertac",
+          "text": "Wow!"
+        }
+      ],
+      "likes": 3
+    },
+    {
+      "id": 4,
+      "userId": 1,
+      "imageUrl": "https://picsum.photos/id/266/800/600",
+      "description": "It is a long established fact that a reader will be distracted by the readable content ",
+      "comments": [
+        {
+          "id": 6,
+          "userId": 2,
+          "username": "ahmet",
+          "text": "Yes!"
+        }
+      ],
+      "likes": 2
     }
   ]
 }

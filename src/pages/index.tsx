@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-
-import { Post, User, Comment } from '../types'
 import { FaThumbsUp } from 'react-icons/fa'
-import Header from '@/components/Header'
+
+import Menu from '@/components/Menu'
+import { Post, User, Comment } from '../types'
 
 //im using hardcoded user id for mocking user login
 const clientUserId = 1
@@ -14,33 +14,17 @@ const Home: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
   const [newComment, setNewComment] = useState<string>('')
 
-  //im getting posts and users with page load and setting them in states
-  useEffect(() => {
-    axios
-      .get<Post[]>('http://localhost:3001/posts')
-      .then((response) => {
-        setPosts(response.data)
-      })
-      .catch((error) => {
-        console.log('error getting posts>>>', error)
-      })
-
-    axios
-      .get<User[]>('http://localhost:3001/users')
-      .then((response) => {
-        setUsers(response.data)
-      })
-      .catch((error) => {
-        console.log('error getting users>>>', error)
-      })
-  }, [])
-
   const openPostModal = (post: Post) => {
-    setPostModal(post)
+    try {
+      localStorage.setItem('postModal', JSON.stringify(post))
+      setPostModal(post)
+    } catch (error) {}
   }
 
   const closePostModal = () => {
     setPostModal(null)
+    console.log(postModal)
+    localStorage.removeItem('postModal')
   }
 
   const findUsername = (userId: number) => {
@@ -110,18 +94,48 @@ const Home: React.FC = () => {
     }
   }
 
+  //im getting posts and users with page load and setting them in states
+  useEffect(() => {
+    try {
+      const localPostModal = localStorage.getItem('postModal')
+      if (localPostModal) {
+        const postData = JSON.parse(localPostModal)
+        console.log('post', postData)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+    axios
+      .get<Post[]>('http://localhost:3001/posts')
+      .then((response) => {
+        setPosts(response.data)
+      })
+      .catch((error) => {
+        console.log('error getting posts>>>', error)
+      })
+
+    axios
+      .get<User[]>('http://localhost:3001/users')
+      .then((response) => {
+        setUsers(response.data)
+      })
+      .catch((error) => {
+        console.log('error getting users>>>', error)
+      })
+  }, [])
+
   return (
     <div className="bg-gray-200 min-h-screen ">
-      <Header />
-
-      <div className="container p-4 ">
+      <Menu />
+      <div className="container lg:mt-[-100vh] lg:pl-[20vw] w-100vw">
         {/* posts */}
-        <div className="flex flex-wrap flex-col justify-center gap-5 text-gray-800 lg:w-4/12 sm:w-1/2 ">
-          <h2 className="text-xl font-semibold mt-4">Posts</h2>
+        <div className=" flex flex-col w-full justify-center items-center gap-5 text-gray-800  ">
+          <h2 className="text-xl font-semibold mt-8">Posts</h2>
           {posts.map((post) => (
             <div
               key={post.id}
-              className="bg-white rounded-lg shadow-md "
+              className="bg-white rounded-lg shadow-md w-56 lg:w-[30vw] "
               onClick={() => openPostModal(post)}
             >
               <img
@@ -141,7 +155,7 @@ const Home: React.FC = () => {
       </div>
       {/* modal */}
       {postModal && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-opacity-80 bg-black text-gray-800">
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 bg-opacity-60 bg-black text-gray-800">
           <button
             className="fixed top-10 right-10 text-white text-xl"
             onClick={closePostModal}

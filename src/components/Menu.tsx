@@ -11,7 +11,7 @@ const Menu: React.FC = () => {
   return (
     <>
       {/* // Mobile and Tablet - Header with hamburger menu /// */}
-      <header className="flex lg:hidden  sticky min-w-full top-0 z-10 bg-white text-gray-700 shadow-lg">
+      <header className=" lg:hidden  sticky min-w-full top-0 z-11 bg-white text-gray-700 shadow-lg">
         <div className="container py-4 min-w-full px-4">
           <div className="flex justify-between items-center">
             <div className="lg:text-2xl text-xl font-bold">Insta</div>
@@ -37,7 +37,7 @@ const Menu: React.FC = () => {
               <FaBars size={24} />
             </div>
             {isMenuOpen && (
-              <div className="fixed inset-0 z-20 bg-black bg-opacity-80   flex items-center justify-center">
+              <div className="fixed inset-0 z-20 bg-black bg-opacity-60   flex items-center justify-center">
                 <div className="bg-white py-32 rounded-lg shadow-md w-3/4  text-center">
                   <div className="text-2xl font-semibold mb-8">Menu</div>
                   <div className="cursor-pointer mb-4">Home</div>
@@ -57,13 +57,13 @@ const Menu: React.FC = () => {
       </header>
 
       {/* ////Large Device - SideBar/// */}
-      <header className="hidden lg:flex sticky min-h-screen w-1/4 max-w-[16rem] top-0 z-10 bg-white text-gray-700 shadow-lg">
+      <header className="hidden lg:flex sticky bottom-0 overflow-y-auto h-screen w-1/4 max-w-[16rem] top-0 z-100 bg-white text-gray-700 shadow-lg">
         <div className="container py-4 px-4  ">
           <div className="flex items-start flex-col space-y-4">
             <div className="text-2xl font-bold   py-6 ">Insta</div>
 
             <hr />
-            <div className="pb-[60vh]">
+            <div className="">
               <div className="cursor-pointer mb-4 flex items-center gap-3 flex-row">
                 <FaHome /> Home
               </div>
