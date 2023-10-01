@@ -10,11 +10,8 @@ const postModalSlice = createSlice({
     setPostModal: (state, action) => {
       return action.payload
     },
-    clearPostModal: (state) => {
-      return null
-    },
   },
 })
 
-export const { setPostModal, clearPostModal } = postModalSlice.actions
+export const { setPostModal } = postModalSlice.actions
 export default postModalSlice.reducer

@@ -25,6 +25,7 @@ const Home: React.FC = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const serverUrl = 'http://localhost:3001'
+
   const openPostModal = (post: Post) => {
     try {
       localStorage.setItem('postModal', JSON.stringify(post))
@@ -146,7 +147,7 @@ const Home: React.FC = () => {
           {posts.map((post: Post) => (
             <div
               key={post.id}
-              className="bg-white rounded-lg shadow-md w-56 lg:w-[30vw] "
+              className="bg-white rounded-lg shadow-md w-56 lg:w-[30vw] hover:bg-blue-100"
               onClick={() => openPostModal(post)}
             >
               <img
