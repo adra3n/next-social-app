@@ -5,6 +5,7 @@ import axios from 'axios'
 import { FaThumbsUp } from 'react-icons/fa'
 
 import Menu from '@/components/Menu'
+import UserPosts from '@/components/UserPosts'
 
 import { User } from '@/types'
 import { setUsers } from '@/redux/userSlice'
@@ -155,6 +156,8 @@ const PostDetail: React.FC = () => {
             </div>
           </div>
         </div>
+        {/* other posts of user */}
+        <UserPosts postOwner={post.username} />
       </div>
     </div>
   )
