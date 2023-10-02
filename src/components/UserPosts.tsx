@@ -11,12 +11,9 @@ const UserPosts = ({
   posts: Post[]
 }) => {
   const userPosts = posts.filter((post: Post) => {
-    console.log('t', post)
     return post.username === ownerUsername
   })
 
-  console.log('posts', posts)
-  console.log('userPosts', userPosts)
   return (
     <div className="py-10 text-gray-700">
       <h2 className="text-lg font-semibold mb-4 text-center">

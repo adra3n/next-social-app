@@ -8,7 +8,7 @@ import Menu from '@/components/Menu'
 const UserProfile: React.FC = () => {
   const router = useRouter()
   const { userId } = router?.query
-  console.log('userId', userId)
+
   const [user, setUser] = useState<User | null>(null)
   const [userPosts, setUserPosts] = useState<Post[]>([])
   const [error, setError] = useState<string>('')
@@ -24,6 +24,7 @@ const UserProfile: React.FC = () => {
           console.error('error getting userr>>>>', error)
           setError('User not found')
         })
+
       axios
         .get<Post[]>(`http://localhost:3001/posts?userId=${userId}`)
         .then((postsResponse) => {
@@ -51,7 +52,6 @@ const UserProfile: React.FC = () => {
     )
   }
 
-  console.log('user', user)
   return (
     <div className="bg-gray-200 min-h-screen text-gray-700">
       <Menu></Menu>

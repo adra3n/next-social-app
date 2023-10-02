@@ -31,7 +31,7 @@ const PostDetail: React.FC = () => {
   const handleLike = async () => {
     //validation for postModal
     if (!post) {
-      console.log('post not found')
+      console.error('post not found')
       return
     }
     try {
@@ -80,23 +80,35 @@ const PostDetail: React.FC = () => {
   useEffect(() => {
     if (postId) {
       //setting init users
-      try {
-        axios.get<Post>(`${serverUrl}/posts/${postId}`).then((response) => {
+      axios
+        .get<Post>(`${serverUrl}/posts/${postId}`)
+        .then((response) => {
           setPost(response.data)
         })
-      } catch (error) {
-        console.log('error loading post data>>', error)
-        setError('User not found')
-      }
+        .catch((error) => {
+          console.error('error loading post data>>', error)
+          setError('User not found')
+        })
 
       //setting init posts
-      try {
-        axios.get<Post[]>(`${serverUrl}/posts`).then((response) => {
+      axios
+        .get<Post[]>(`${serverUrl}/posts`)
+        .then((response) => {
           dispatch(setPosts(response.data))
         })
-      } catch (error) {
-        console.log('error loading users data>>', error)
-      }
+        .catch((error) => {
+          console.error('error loading users data>>', error)
+        })
+
+      //setting init posts
+      axios
+        .get<User[]>(`${serverUrl}/users`)
+        .then((response) => {
+          dispatch(setUsers(response.data))
+        })
+        .catch((error) => {
+          console.error('error getting users>>>', error)
+        })
 
       localStorage?.removeItem('postModal')
     }
@@ -117,6 +129,7 @@ const PostDetail: React.FC = () => {
       </p>
     )
   }
+
   return (
     <div className="bg-gray-200 min-h-screen">
       <Menu />

@@ -21,7 +21,7 @@ const Menu: React.FC = () => {
   //im filtering posts with searchQuery in useEffect
   useEffect(() => {
     const filteredPosts = filterPostsHelper(posts, searchQuery, 'all')
-    console.log('filteredPosts', filteredPosts)
+    // console.log('filteredPosts', filteredPosts)
     dispatch(setFilteredPosts(filteredPosts))
   }, [searchQuery, posts, dispatch])
 

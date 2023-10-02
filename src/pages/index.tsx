@@ -38,7 +38,6 @@ const Home: React.FC = () => {
 
   const closePostModal = () => {
     dispatch(setPostModal(null))
-    console.log(postModal)
     localStorage.removeItem('postModal')
   }
 
@@ -49,10 +48,10 @@ const Home: React.FC = () => {
       if (user) {
         return user.username
       } else {
-        console.log('cant find user with id >>>', userId)
+        console.error('cant find user with id >>>', userId)
       }
     } catch (error) {
-      console.log('error findUsername>>>', error)
+      console.error('error findUsername>>>', error)
     }
   }
 
@@ -60,7 +59,7 @@ const Home: React.FC = () => {
   const handleLike = async () => {
     //validation for postModal for ts
     if (!postModal) {
-      console.log('post not found')
+      console.error('post not found')
       return
     }
     try {
@@ -117,12 +116,11 @@ const Home: React.FC = () => {
       if (localPostModal) {
         // parsing
         const postData = JSON.parse(localPostModal)
-        console.log('post from localstorage', postData)
         // redirect
         router.push(`/posts/${postData.id}`)
       }
     } catch (error) {
-      console.log('error gettin local data>>', error)
+      console.error('error gettin local data>>', error)
     }
     //setting init posts
     axios
@@ -131,7 +129,7 @@ const Home: React.FC = () => {
         dispatch(setPosts(response.data))
       })
       .catch((error) => {
-        console.log('error getting posts>>>', error)
+        console.error('error getting posts>>>', error)
       })
 
     //setting init users
@@ -141,7 +139,7 @@ const Home: React.FC = () => {
         dispatch(setUsers(response.data))
       })
       .catch((error) => {
-        console.log('error getting users>>>', error)
+        console.error('error getting users>>>', error)
       })
   }, [])
 
