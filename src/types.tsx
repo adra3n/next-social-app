@@ -18,5 +18,6 @@ export interface Post {
   description: string
   comments: Comment[]
   likes: number
+  username: string
   isLiked: boolean
 }

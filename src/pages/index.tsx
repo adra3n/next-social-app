@@ -21,11 +21,13 @@ const Home: React.FC = () => {
   const users = useSelector((state: any) => state.users)
   const posts = useSelector((state: any) => state.posts)
   const postModal = useSelector((state: any) => state.postModal)
+  const filteredPosts = useSelector((state: any) => state.filteredPosts)
 
   const router = useRouter()
   const dispatch = useDispatch()
   const serverUrl = 'http://localhost:3001'
 
+  //modal handlers
   const openPostModal = (post: Post) => {
     try {
       localStorage.setItem('postModal', JSON.stringify(post))
@@ -39,6 +41,7 @@ const Home: React.FC = () => {
     localStorage.removeItem('postModal')
   }
 
+  //helper func for finding username for comments
   const findUsername = (userId: number) => {
     try {
       const user = users.find((user: User) => user.id === userId)
@@ -52,6 +55,7 @@ const Home: React.FC = () => {
     }
   }
 
+  //like handler
   const handleLike = async () => {
     //validation for postModal for ts
     if (!postModal) {
@@ -72,6 +76,7 @@ const Home: React.FC = () => {
     }
   }
 
+  //comment handler
   const handleComment = async () => {
     if (postModal && newComment.trim() !== '') {
       try {
@@ -118,6 +123,7 @@ const Home: React.FC = () => {
     } catch (error) {
       console.log('error gettin local data>>', error)
     }
+    //setting init posts
     axios
       .get<Post[]>(`${serverUrl}/posts`)
       .then((response) => {
@@ -127,6 +133,7 @@ const Home: React.FC = () => {
         console.log('error getting posts>>>', error)
       })
 
+    //setting init users
     axios
       .get<User[]>(`${serverUrl}/users`)
       .then((response) => {
@@ -144,7 +151,7 @@ const Home: React.FC = () => {
         {/* posts */}
         <div className=" flex flex-col w-full justify-center items-center gap-5 text-gray-800  ">
           <h2 className="text-xl font-semibold mt-8">Your Feed</h2>
-          {posts.map((post: Post) => (
+          {filteredPosts.map((post: Post) => (
             <div
               key={post.id}
               className="bg-white rounded-lg shadow-md w-56 lg:w-[30vw] hover:bg-blue-100"
@@ -204,12 +211,12 @@ const Home: React.FC = () => {
                 <span className="ml-2 italic">{postModal.likes} Likes</span>
               </div>
               {/* comments */}
-              <h2 className="text-lg font-semibold  mb-2">Comments:</h2>
+              <h2 className=" font-semibold  mb-2">Comments:</h2>
 
               <ul>
                 {postModal.comments.map((comment: Comment) => (
                   <li key={comment.id} className="text-gray-800">
-                    <span className="font-semibold">
+                    <span className="font-semibold italic">
                       {findUsername(comment.userId)}
                     </span>
                     - {comment.text}

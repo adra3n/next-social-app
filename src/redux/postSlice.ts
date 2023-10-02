@@ -1,19 +1,18 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { Post } from '../types'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { Post, User } from '../types'
 
 const initialState: Post[] = []
 
-const postSlice = createSlice({
+const postSlice: any = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    setPosts: (state, action) => {
+    setPosts: (state, action: PayloadAction<Post[]>) => {
       return action.payload
     },
-
-    updatePost: (state, action) => {
+    //updating post here
+    updatePost: (state, action: PayloadAction<Post>) => {
       const updatedPost = action.payload
-
       state = state.map((post) => {
         if (post.id === updatedPost.id) {
           return updatedPost

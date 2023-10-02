@@ -5,24 +5,11 @@ import axios from 'axios'
 import { FaThumbsUp } from 'react-icons/fa'
 
 import Menu from '@/components/Menu'
+
 import { User } from '@/types'
 import { setUsers } from '@/redux/userSlice'
-
-interface Comment {
-  id: number
-  userId: number
-  text: string
-}
-
-interface Post {
-  id: number
-  userId: number
-  imageUrl: string
-  description: string
-  comments: Comment[]
-  likes: number
-  isLiked: boolean
-}
+import { setPosts } from '@/redux/postSlice'
+import { Post, Comment } from '@/types'
 
 const serverUrl = 'http://localhost:3001'
 
@@ -39,6 +26,7 @@ const PostDetail: React.FC = () => {
 
   useEffect(() => {
     if (postId) {
+      //setting init users
       try {
         axios.get<Post>(`${serverUrl}/posts/${postId}`).then((response) => {
           setPost(response.data)
@@ -47,9 +35,10 @@ const PostDetail: React.FC = () => {
         console.log('error loading post data>>', error)
       }
 
+      //setting init posts
       try {
         axios.get<Post[]>(`${serverUrl}/posts`).then((response) => {
-          dispatch(setUsers(response.data))
+          dispatch(setPosts(response.data))
         })
       } catch (error) {
         console.log('error loading users data>>', error)
@@ -79,17 +68,16 @@ const PostDetail: React.FC = () => {
     }
   }
 
-  const handleCommentSubmit = () => {
+  const handleComment = async () => {
     if (post && newComment.trim() !== '') {
+      //model for comment
+      const newCommentObj: Comment = {
+        //  length+1 for mocking increment on db
+        id: post.comments.length + 1,
+        userId: 1,
+        text: newComment,
+      }
       try {
-        //model for comment
-        const newCommentObj: Comment = {
-          //  length+1 for mocking increment on db
-          id: post.comments.length + 1,
-          userId: 1,
-          text: newComment,
-        }
-
         //im adding newCommentObject to post data as updatedPost
         const updatedPost = {
           ...post,
@@ -97,8 +85,8 @@ const PostDetail: React.FC = () => {
         }
         setPost(updatedPost)
 
-        //post
-        axios.post(`${serverUrl}/posts/${postId}/comments`, newCommentObj)
+        // axios post comment
+        await axios.post(`${serverUrl}/posts/${postId}/comments`, newCommentObj)
       } catch (error) {
         console.error('error posting comment>>>', error)
       }
@@ -118,6 +106,7 @@ const PostDetail: React.FC = () => {
       <Menu />
       <div className="container lg:mt-[-100vh] lg:pl-[25vw] lg:pt-24">
         <div className="bg-white rounded-lg shadow-md h-full flex m-4">
+          <p>{post.username}</p>
           <img
             src={post.imageUrl}
             alt={post.description}
@@ -159,7 +148,7 @@ const PostDetail: React.FC = () => {
               ></input>
               <button
                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                onClick={handleCommentSubmit}
+                onClick={handleComment}
               >
                 Comment
               </button>
