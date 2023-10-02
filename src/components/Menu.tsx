@@ -6,6 +6,8 @@ import { Post } from '@/types'
 import { setFilteredPosts } from '@/redux/filteredPostSlice'
 import { filterPostsHelper } from '@/utils/filterPosts'
 
+const clientUserId = 1
+
 const Menu: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
   const [searchQuery, setSearchQuery] = useState<string>('')
@@ -92,7 +94,7 @@ const Menu: React.FC = () => {
                   <FaHome /> Home
                 </div>
               </Link>
-              <Link href="#">
+              <Link href={`/users/${clientUserId}`}>
                 <div className="cursor-pointer mb-4 flex items-center gap-3 flex-row hover:text-blue-400">
                   <FaUser /> Profile
                 </div>

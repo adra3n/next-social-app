@@ -11,43 +11,22 @@ import { User } from '@/types'
 import { setUsers } from '@/redux/userSlice'
 import { setPosts } from '@/redux/postSlice'
 import { Post, Comment } from '@/types'
+import Link from 'next/link'
 
 const serverUrl = 'http://localhost:3001'
 
 const PostDetail: React.FC = () => {
   const users = useSelector((state: any) => state.users)
+  const posts = useSelector((state: any) => state.posts)
 
   const [post, setPost] = useState<Post | null>(null)
   const [newComment, setNewComment] = useState<string>('')
+  const [error, setError] = useState<string>('')
 
   const router = useRouter()
   const { postId } = router.query
 
   const dispatch = useDispatch()
-
-  useEffect(() => {
-    if (postId) {
-      //setting init users
-      try {
-        axios.get<Post>(`${serverUrl}/posts/${postId}`).then((response) => {
-          setPost(response.data)
-        })
-      } catch (error) {
-        console.log('error loading post data>>', error)
-      }
-
-      //setting init posts
-      try {
-        axios.get<Post[]>(`${serverUrl}/posts`).then((response) => {
-          dispatch(setPosts(response.data))
-        })
-      } catch (error) {
-        console.log('error loading users data>>', error)
-      }
-
-      localStorage?.removeItem('postModal')
-    }
-  }, [postId])
 
   const handleLike = async () => {
     //validation for postModal
@@ -98,23 +77,63 @@ const PostDetail: React.FC = () => {
     }
   }
 
-  if (!post) {
-    return <p>Loading...</p>
+  useEffect(() => {
+    if (postId) {
+      //setting init users
+      try {
+        axios.get<Post>(`${serverUrl}/posts/${postId}`).then((response) => {
+          setPost(response.data)
+        })
+      } catch (error) {
+        console.log('error loading post data>>', error)
+        setError('User not found')
+      }
+
+      //setting init posts
+      try {
+        axios.get<Post[]>(`${serverUrl}/posts`).then((response) => {
+          dispatch(setPosts(response.data))
+        })
+      } catch (error) {
+        console.log('error loading users data>>', error)
+      }
+
+      localStorage?.removeItem('postModal')
+    }
+  }, [postId])
+
+  if (error) {
+    return (
+      <p className="flex flex-col  justify-center items-center w-screen h-screen">
+        {error}
+      </p>
+    )
   }
 
+  if (!post) {
+    return (
+      <p className="flex flex-col  justify-center items-center w-screen h-screen">
+        Loading...
+      </p>
+    )
+  }
   return (
     <div className="bg-gray-200 min-h-screen">
       <Menu />
-      <div className="container lg:mt-[-100vh] lg:pl-[25vw] lg:pt-24">
-        <div className="bg-white rounded-lg shadow-md h-full flex m-4">
-          <p>{post.username}</p>
+      <div className="container lg:mt-[-100vh] lg:pl-[25vw] lg:pt-25">
+        <div className="bg-white rounded-lg shadow-md  w-[90%] m-auto flex flex-row flex-wrap mt-6 py-6  text-gray-800 text-sm">
           <img
             src={post.imageUrl}
             alt={post.description}
-            className="w-2/3 object-cover"
+            className="w-2/3 object-cover px-2 "
           />
-          <div className="p-4 w-1/3 text-gray-800">
-            <p className="">{post.description}</p>
+          <div className="p-4 w-1/3 flex-col">
+            <Link href={`/users/${post.userId}`}>
+              <p className="font-semibold pb-3 hover:text-blue-500">
+                {post.username}
+              </p>
+            </Link>{' '}
+            <p className="mb-6">{post.description}</p>
             <div className="flex items-center mt-2 mb-6">
               <button
                 className={`text-blue-500 ${
@@ -126,7 +145,7 @@ const PostDetail: React.FC = () => {
               </button>
               <span className="ml-2 italic">{post.likes} Likes</span>
             </div>
-            <h2 className="text-lg font-semibold  mb-2">Comments:</h2>
+            <h2 className="font-semibold  mb-2 ">Comments:</h2>
             <ul className="space-y-2">
               {post.comments.map((comment) => (
                 <li key={comment.id} className="text-gray-800">
@@ -157,7 +176,7 @@ const PostDetail: React.FC = () => {
           </div>
         </div>
         {/* other posts of user */}
-        <UserPosts postOwner={post.username} />
+        <UserPosts ownerUsername={post.username} posts={posts} />
       </div>
     </div>
   )

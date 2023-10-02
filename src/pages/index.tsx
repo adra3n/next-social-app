@@ -10,6 +10,7 @@ import { setPostModal } from '@/redux/postModalSlice'
 import { setUsers } from '../redux/userSlice'
 import { Post, User, Comment } from '../types'
 import { setPosts } from '@/redux/postSlice'
+import Link from 'next/link'
 
 //im using hardcoded user id for mocking user login
 const clientUserId = 1
@@ -149,12 +150,12 @@ const Home: React.FC = () => {
       <Menu />
       <div className="container lg:mt-[-100vh] lg:pl-[20vw] w-100vw">
         {/* posts */}
-        <div className=" flex flex-col w-full justify-center items-center gap-5 text-gray-800  ">
+        <div className=" flex flex-col w-full justify-center items-center gap-5 mb-8 text-gray-800  ">
           <h2 className="text-xl font-semibold mt-8">Your Feed</h2>
           {filteredPosts.map((post: Post) => (
             <div
               key={post.id}
-              className="bg-white rounded-lg shadow-md w-56 lg:w-[30vw] hover:bg-blue-100"
+              className="bg-white rounded-lg shadow-md lg:w-[40vw] hover:bg-blue-100"
               onClick={() => openPostModal(post)}
             >
               <img
@@ -163,6 +164,7 @@ const Home: React.FC = () => {
                 className="w-full lg:h-96 object-cover"
               />
               <div className="p-4">
+                <p className="font-semibold pb-3">{post.username}</p>
                 <p>{post.description}</p>
                 <div className="flex items-center mt-4">
                   <span className="italic flex gap-1 items-center">
@@ -188,13 +190,18 @@ const Home: React.FC = () => {
           >
             X
           </button>
-          <div className="bg-white rounded-lg shadow-md lg:w-2/3 sm:w-16 p-4 lg:flex ">
+          <div className="bg-white rounded-lg shadow-md lg:w-2/3 md:w-96 sm:w-16 p-4 lg:flex ">
             <img
               src={postModal.imageUrl}
               alt={postModal.description}
               className="lg:w-2/3 object-cover  "
             />
             <div className="lg:pl-6 flex-column  ">
+              <Link href={`/users/${postModal.userId}`}>
+                <p className="font-semibold pb-3 hover:text-blue-500">
+                  {postModal.username}
+                </p>
+              </Link>
               <p className="font-serif italic mb-6">{postModal.description}</p>
 
               <hr></hr>
