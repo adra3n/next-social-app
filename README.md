@@ -2,13 +2,14 @@
 
 ## Introduction
 
-I create a simple social media app with the some project requirements. My main tasks were:
-- To handle the browser refresh action and reroute to a specific page with Next.js.
-- To create a modal look without using any Modal libraries.
-- Style with libraries like TailwindCSS instead of using pre-built components
-- Not to use pre-built components for features like buttons, modals, etc. Build these components from scratch.
+I prepared a MVP project based on previously given tasks.
 
-- 
+My main tasks were:
+- Handling the browser refresh action and rerouting to a specific page with Next.js.
+- Creating a modal look without using any Modal libraries.
+- Styling with libraries like Tailwind CSS instead of using pre-built components.
+- Not using pre-built components for features like buttons, modals, etc. Building these components from scratch.
+
 
 ## Features
 
