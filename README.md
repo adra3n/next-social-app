@@ -10,7 +10,6 @@ My main tasks were:
 - Styling with libraries like Tailwind CSS instead of using pre-built components.
 - Not using pre-built components for features like buttons, modals, etc. Building these components from scratch.
 
-
 ## Features
 
 - Next.js dynamic routes
