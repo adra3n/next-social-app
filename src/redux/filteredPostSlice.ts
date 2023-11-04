@@ -13,5 +13,6 @@ const filteredPostsSlice = createSlice({
   },
 })
 
+
 export const { setFilteredPosts } = filteredPostsSlice.actions
 export default filteredPostsSlice.reducer
